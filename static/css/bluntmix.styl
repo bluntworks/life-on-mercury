@@ -1,0 +1,102 @@
+col_yin     = #000
+col_yang    = #fff
+
+sale_bg = yang(5)
+sale_bg = yin(50)
+
+lime        = #a2bd30
+dark_green  = #142d14
+mid_green   = #2f6b2f
+orange      = #ef8c22
+yellow      = #fde006
+red         = #b44326
+sgreen  = #5cb85c
+
+georgia = 16px\/18px Georgia, serif
+
+pad = 25px
+
+yin(p=0) {
+  lighten(col_yin, p)
+}
+
+yang(p=0) {
+  darken(col_yang, p)
+}
+
+mono = 10px\/12px $font-family-monospace
+
+make_col(c=1) {
+  make-lg-column(c)
+  make-md-column(c)
+  make-sm-column(c)
+}
+
+makecol(c=1, g=30px) {
+  make-sm-column(c, g)
+  make-md-column(c, g)
+}
+
+brad()
+  -webkit-border-radius arguments
+  -moz-border-radius arguments
+  border-radius arguments
+
+jCell()
+  width   23%
+  height  200px
+  margin 0 2% 20px 0 
+  background #ccc
+  brad rad
+  font-size fsz+1
+  color #bbb
+  text-align center
+  line-height 200px
+  
+bkgr()
+  background arguments
+
+bosh()
+  -moz-box-shadow: arguments
+  -webkit-box-shadow: arguments
+  box-shadow: arguments
+
+bish()
+  -moz-box-shadow: inset arguments
+  -webkit-box-shadow: inset  arguments
+  box-shadow: inset  arguments
+
+brd()
+  border arguments
+
+fon(fam = 'Ariel', sz = fsz - .8, w = normal, st = normal)
+  font-family fam
+  font-size sz
+  font-weight w
+  font-style st
+boxsize()
+  -webkit-box-sizing border-box
+  -moz-box-sizing border-box
+  -o-box-sizing boder-box
+  box-sizing border-box
+
+stroke(fc sc sw)
+  -webkit-text-fill-color fc
+  -webkit-text-stroke-color sc
+  -webkit-text-strongke-width sw
+  -moz-text-fill-color fc
+  -moz-text-stroke-color sc
+  -moz-text-strongke-width sw
+  text-fill-color fc
+  text-stroke-color sc
+  text-stroke-width sw
+
+gutter()
+  margin arguments
+  padding arguments
+
+fullbg(src) 
+  background url(src) no-repeat center center fixed
+  vendor(background-size, cover)
+
+

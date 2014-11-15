@@ -1,0 +1,110 @@
+@import 'head'
+
+html, body
+  width 100%
+  height 100%
+
+body
+  font lucy
+  color #343434
+
+$bc = #ddd
+$hc = #333
+
+.chatty-box
+  absolute bottom left 50px
+  width 320px
+  height 480px
+  margin 0
+  bosh 2px 2px 20px rgba(0, 0, 0, 0.4)
+  boxsize()
+
+.chatty-box header
+  relative top left
+  z-index 10
+  width 100%
+  height 40px
+  background $hc
+  color $bc
+  boxsize()
+  padding 5px
+
+.chatty-box header .status
+  float left
+  width 10px
+  height 10px
+  brad 10px
+  margin 10px 5px 10px 5px
+  &.green
+    background #00aa22
+    
+.chatty-box header h2
+  float left
+  padding 0
+  margin 0
+  line-height 30px
+
+.chatty-box .cmds
+  z-index 10
+  relative top left
+  float left
+  width 100%
+  height 30px
+  boxsize()
+  background $bc
+
+.chatty-box .chat-region
+  z-index 0
+  relative top left
+  float left
+  width 100%
+  height 410px
+
+.chatty-box .msg-region
+  relative top left
+  width 100%
+  height 355px
+  boxsize()
+  overflow none
+
+.chatty-box .msgs
+    absolute bottom 20px left
+    float left
+    width 100%
+    overflow auto
+    max-height 340px
+    boxsize()
+
+.chatty-box .msgs li
+  float left
+  width 100%
+  boxsize()
+  padding 10px
+  .tag
+    float left
+    font-weight bold
+    margin-right 10px
+  .meta
+    font courier
+    color #666
+
+.chatty-box .inp-region
+  absolute bottom left
+  float left
+  width 100%
+  height 75px
+  textarea
+    resize none
+    width 310px
+    height 65px
+    margin 5px
+    padding 5px
+    border 1px solid #aaa
+    boxsize()
+
+
+
+
+
+
+@import 'tail'
