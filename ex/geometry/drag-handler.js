@@ -16,6 +16,8 @@ DragEventHandler.prototype.handleEvent = function (ev) {
     var fn = this.fn
     var value = this.value
 
+    log('event handle', this)
+
     var currentX = ev.offsetX || ev.layerX
     var currentY = ev.offsetY || ev.layerY
 

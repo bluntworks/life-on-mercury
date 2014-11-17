@@ -656,7 +656,8 @@ function removeEvent(target, type, handler) {
 },{"data-set":"/home/bluntworks/apps/life/node_modules/dom-delegator/node_modules/data-set/index.js"}],"/home/bluntworks/apps/life/node_modules/mercury/index.js":[function(require,module,exports){
 var SingleEvent = require('geval/single');
 var MultipleEvent = require('geval/multiple');
-
+var BaseEvent = require('value-event/base-event')
+var xtend     = require('xtend')
 /*
     Pro tip: Don't require `mercury` itself.
       require and depend on all these modules directly!
@@ -675,6 +676,7 @@ var mercury = module.exports = {
     submitEvent: require('value-event/submit'),
     changeEvent: require('value-event/change'),
     keyEvent: require('value-event/key'),
+    mouseEvent: BaseEvent(mouseLambda),
 
     // State
     array: require('observ-array'),
@@ -728,7 +730,21 @@ function app(elem, observ, render, opts) {
     return observ(loop.update);
 }
 
-},{"dom-delegator":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/index.js","geval/multiple":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/multiple.js","geval/single":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/single.js","main-loop":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/main-loop/index.js","observ":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/index.js","observ-array":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-array/index.js","observ-struct":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-struct/index.js","observ-varhash":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-varhash/index.js","observ/computed":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/computed.js","observ/watch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/watch.js","value-event/change":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/change.js","value-event/event":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/event.js","value-event/key":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/key.js","value-event/submit":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/submit.js","value-event/value":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/value.js","vdom-thunk":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom-thunk/index.js","vdom/create-element":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/create-element.js","vdom/patch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/patch.js","virtual-hyperscript":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/index.js","virtual-hyperscript/svg":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/svg.js","vtree/diff":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vtree/diff.js"}],"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/add-event.js":[function(require,module,exports){
+
+//var mouseEvent = BaseEvent(mouseLambda)
+
+function mouseLambda(ev) {
+  var opts = this.opts
+  var data = {
+    src: ev.target,
+    x: ev.offsetX || ev.layerX,
+    y: ev.offsetY || ev.layerY
+  }
+
+  return xtend(this.data, data)
+}
+
+},{"dom-delegator":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/index.js","geval/multiple":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/multiple.js","geval/single":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/single.js","main-loop":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/main-loop/index.js","observ":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/index.js","observ-array":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-array/index.js","observ-struct":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-struct/index.js","observ-varhash":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-varhash/index.js","observ/computed":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/computed.js","observ/watch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/watch.js","value-event/base-event":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/base-event.js","value-event/change":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/change.js","value-event/event":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/event.js","value-event/key":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/key.js","value-event/submit":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/submit.js","value-event/value":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/value.js","vdom-thunk":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom-thunk/index.js","vdom/create-element":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/create-element.js","vdom/patch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/patch.js","virtual-hyperscript":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/index.js","virtual-hyperscript/svg":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/svg.js","vtree/diff":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vtree/diff.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/add-event.js":[function(require,module,exports){
 var DataSet = require("data-set")
 
 module.exports = addEvent
@@ -5814,7 +5830,26 @@ function VirtualPatch(type, vNode, patch) {
 VirtualPatch.prototype.version = version
 VirtualPatch.prototype.type = "VirtualPatch"
 
-},{"./version":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vtree/version.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/browser-resolve/empty.js":[function(require,module,exports){
+},{"./version":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vtree/version.js"}],"/home/bluntworks/apps/life/node_modules/xtend/immutable.js":[function(require,module,exports){
+module.exports = extend
+
+function extend() {
+    var target = {}
+
+    for (var i = 0; i < arguments.length; i++) {
+        var source = arguments[i]
+
+        for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+                target[key] = source[key]
+            }
+        }
+    }
+
+    return target
+}
+
+},{}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/browser-resolve/empty.js":[function(require,module,exports){
 
 },{}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
