@@ -3,7 +3,7 @@ var merc = require('mercury')
 var h    = merc.h
 
 
-var Grid = require('./lib/grid')
+var Grid = require('./components/grid')
 var grid = Grid()
 
 boot(doc.body, grid.state, Grid.render)
@@ -17,5 +17,3 @@ function boot(elem, observ, render, opts) {
   elem.appendChild(loop.target)
   return observ(loop.update)
 }
-//var app = merc.app(doc.body, state, render)
-//merc.Delegator.listenTo('mouseover')

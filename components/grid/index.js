@@ -1,6 +1,5 @@
 var merc      = require('mercury')
 var h         = merc.h
-
 var Canvas    = require('./canvas')
 var MouseDown = require('./mouse').MouseDown
 var MouseOver = require('./mouse').MouseOver
@@ -21,6 +20,8 @@ function grid(data) {
 
   var events = initEvents(state)
   state.events.set(events)
+
+  log('grid', state.grid, state.grid())
 
   return {
     state: state,

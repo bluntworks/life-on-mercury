@@ -18,8 +18,6 @@ function boot(elem, observ, render, opts) {
   elem.appendChild(loop.target)
   return observ(loop.update)
 }
-//var app = merc.app(doc.body, state, render)
-//merc.Delegator.listenTo('mouseover')
 
 },{"./lib/grid":"/home/bluntworks/apps/life/lib/grid/index.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/lib/grid/canvas.js":[function(require,module,exports){
 var doc  = require('global/document')
@@ -99,7 +97,6 @@ Canvas.prototype.update = function(prev, el) {
 },{"./mouse-grid":"/home/bluntworks/apps/life/lib/grid/mouse-grid.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","raf":"/home/bluntworks/apps/life/node_modules/raf/index.js"}],"/home/bluntworks/apps/life/lib/grid/index.js":[function(require,module,exports){
 var merc      = require('mercury')
 var h         = merc.h
-
 var Canvas    = require('./canvas')
 var MouseDown = require('./mouse').MouseDown
 var MouseOver = require('./mouse').MouseOver
@@ -120,6 +117,8 @@ function grid(data) {
 
   var events = initEvents(state)
   state.events.set(events)
+
+  log('grid', state.grid, state.grid())
 
   return {
     state: state,
