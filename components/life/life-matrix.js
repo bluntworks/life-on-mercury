@@ -1,4 +1,3 @@
-//algorithm taken from this fiddle http://jsfiddle.net/ankr/tgjLA/
 module.exports = function(cells, rc, cc) {
   return genr()
 

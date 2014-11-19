@@ -1,30 +1,10 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/bluntworks/apps/life/index.js":[function(require,module,exports){
-var doc  = require('global/document')
-var merc = require('mercury')
-var h    = merc.h
-
-
-var Grid = require('./lib/grid')
-var grid = Grid()
-
-boot(doc.body, grid.state, Grid.render)
-
-function boot(elem, observ, render, opts) {
-  var del = new merc.Delegator(opts);
-  ['mouseover', 'mouseout'].forEach(function(ev) {
-    del.listenTo(ev)
-  })
-  var loop = merc.main(observ(), render, opts)
-  elem.appendChild(loop.target)
-  return observ(loop.update)
-}
-
-},{"./lib/grid":"/home/bluntworks/apps/life/lib/grid/index.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/lib/grid/canvas.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/bluntworks/apps/life/components/grid/canvas.js":[function(require,module,exports){
 var doc  = require('global/document')
 var merc = require('mercury')
 var m2g  = require('./mouse-grid').m2g
 var g2m  = require('./mouse-grid').g2m
 var raf  = require('raf')
+var dump = require('../../dump')
 
 module.exports = Canvas
 
@@ -53,9 +33,10 @@ Canvas.prototype.update = function(prev, el) {
   var grid = this.data.grid
   var rc = cc = this.data.cc
 
+  //dump('canvas', grid)
+
   raf(function() {
     ctx.clearRect(0, 0, 800, 800)
-
     for(var r = 0; r < rc; r++) {
       for(var c = 0; c < cc; c++) {
         var cell = {
@@ -94,13 +75,14 @@ Canvas.prototype.update = function(prev, el) {
   })
 }
 
-},{"./mouse-grid":"/home/bluntworks/apps/life/lib/grid/mouse-grid.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","raf":"/home/bluntworks/apps/life/node_modules/raf/index.js"}],"/home/bluntworks/apps/life/lib/grid/index.js":[function(require,module,exports){
+},{"../../dump":"/home/bluntworks/apps/life/dump.js","./mouse-grid":"/home/bluntworks/apps/life/components/grid/mouse-grid.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","raf":"/home/bluntworks/apps/life/node_modules/raf/index.js"}],"/home/bluntworks/apps/life/components/grid/index.js":[function(require,module,exports){
 var merc      = require('mercury')
 var h         = merc.h
 var Canvas    = require('./canvas')
 var MouseDown = require('./mouse').MouseDown
 var MouseOver = require('./mouse').MouseOver
 var m2g       = require('./mouse-grid').m2g
+var dump      = require('../../dump')
 
 module.exports = grid
 
@@ -118,7 +100,7 @@ function grid(data) {
   var events = initEvents(state)
   state.events.set(events)
 
-  log('grid', state.grid, state.grid())
+  //log('grid', state.grid, state.grid())
 
   return {
     state: state,
@@ -144,8 +126,11 @@ function initEvents(state) {
 
   events.mousedown(function(xy) {
     var rc = m2g(xy, state.cc())
+    //dump('mdown', state.grid())
+    //log('RC b4', state.grid.get(rc.r)())
     var c = state.grid.get(rc.r).get(rc.c);
     (c()) ? c.set(false) : c.set(true)
+    //log('RC af', state.grid.get(rc.r)())
   })
 
   events.mouseover(function(ev) {
@@ -175,7 +160,7 @@ function initCell(r, c) {
   return merc.value(false)
 }
 
-},{"./canvas":"/home/bluntworks/apps/life/lib/grid/canvas.js","./mouse":"/home/bluntworks/apps/life/lib/grid/mouse.js","./mouse-grid":"/home/bluntworks/apps/life/lib/grid/mouse-grid.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/lib/grid/mouse-grid.js":[function(require,module,exports){
+},{"../../dump":"/home/bluntworks/apps/life/dump.js","./canvas":"/home/bluntworks/apps/life/components/grid/canvas.js","./mouse":"/home/bluntworks/apps/life/components/grid/mouse.js","./mouse-grid":"/home/bluntworks/apps/life/components/grid/mouse-grid.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/components/grid/mouse-grid.js":[function(require,module,exports){
 var merc = require('mercury')
 
 module.exports = {
@@ -205,7 +190,7 @@ function grid2mouse(rc, cc) {
   }
 }
 
-},{"mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/lib/grid/mouse.js":[function(require,module,exports){
+},{"mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/components/grid/mouse.js":[function(require,module,exports){
 var window = require('global/window')
 var extend = require('xtend')
 var merc   = require('mercury')
@@ -266,7 +251,176 @@ MouseOver.prototype.handleEvent = function(ev) {
 
 }
 
-},{"global/window":"/home/bluntworks/apps/life/node_modules/global/window.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/node_modules/global/document.js":[function(require,module,exports){
+},{"global/window":"/home/bluntworks/apps/life/node_modules/global/window.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/components/life/index.js":[function(require,module,exports){
+var merc = require('mercury')
+var h    = merc.h
+var genr = require('./life-matrix')
+var raf  = require('raf')
+
+module.exports = life
+
+function life(gridState) {
+  var state = merc.struct({
+    looping: merc.value(false),
+    tok: merc.value(125),
+    events: merc.struct({})
+  })
+
+  var events = initEvents(state, gridState)
+  state.events.set(events)
+  return state
+}
+
+life.render = function(state) {
+  return h('div#topbar', [
+    renderTok(state.life.state)
+  ])
+}
+
+function renderTok(state) {
+  var events = state.events
+  return h('input.tok', {
+    name: 'tok',
+    'ev-change': merc.changeEvent(events.change)
+  })
+}
+
+function initEvents(state, gridState) {
+
+  var events = merc.input([
+    'change', 'keyup'
+  ])
+
+  events.change(function(val) {
+    state.tok.set(val)
+  })
+
+  //set up generator loop handling
+  //first pass sure theres a better way to do this
+  //ask @raynos about this
+  var del = merc.Delegator()
+  del.addGlobalEventListener('keyup', function(ev) {
+    if(32 === ev.keyCode)
+      state.looping.set(!state.looping())
+  })
+
+  var stopped = true
+  var tid
+
+  state.looping(function(loop) {
+    (loop) ? run(gridState) : stop(state)
+  })
+
+  function run(gridState) {
+    log('start')
+    stopped = false
+    var tok = state.tok()
+    function tik() {
+      raf(function() {
+        //if(stopped) return
+        var grid = gridState.grid
+        var next = genr(grid(), 10, 10)
+        for(var r = 0; r < 10; r++) {
+          for(var c = 0; c < 10; c++) {
+            grid.get(r).get(c).set(next[r][c])
+          }
+        }
+        if(state.looping()) setTimeout(tik, tok)
+      })
+    }
+
+    setTimeout(tik, tok)
+  }
+
+  function stop(state) {
+    if(!stopped) {
+      log('stop')
+      stopped = true
+      state.looping.set(false)
+    }
+  }
+}
+
+
+
+},{"./life-matrix":"/home/bluntworks/apps/life/components/life/life-matrix.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","raf":"/home/bluntworks/apps/life/node_modules/raf/index.js"}],"/home/bluntworks/apps/life/components/life/life-matrix.js":[function(require,module,exports){
+module.exports = function(cells, rc, cc) {
+  return genr()
+
+  function genr() {
+    var res   = []
+    for(var r = 0; r < rc; r++) {
+      res[r] = []
+      for(var c = 0; c < cc; c++) {
+        var alive = 0
+        var count = neighbours(r, c)
+        if(cells[r][c]) alive = (count === 2 || count === 3) ? true : false
+        else alive = (count === 3) ? true : false
+        res[r][c] = alive
+      }
+    }
+    return res
+  }
+
+  function neighbours(x, y) {
+    var count = 0
+
+    if(isOn( x-1, y-1 )) count++
+    if(isOn( x,   y-1 )) count++
+    if(isOn( x+1, y-1 )) count++
+    if(isOn( x-1, y   )) count++
+    if(isOn( x+1, y   )) count++
+    if(isOn( x-1, y+1 )) count++
+    if(isOn( x,   y+1 )) count++
+    if(isOn( x+1, y+1 )) count++
+
+    return count
+
+    function isOn(x, y) {
+      return cells[x] && cells[x][y]
+    }
+  }
+}
+
+},{}],"/home/bluntworks/apps/life/dump.js":[function(require,module,exports){
+module.exports = function(name, grid) {
+  var o = ''
+  for(var r = 0; r < 10; r ++) {
+    for(var c = 0; c < 10; c++) {
+      o += (grid[r][c]) ? 1 : 0
+    }
+    o += '\n'
+  }
+  log('----' + name + '----')
+  log(o)
+  log('------------------------------')
+}
+
+},{}],"/home/bluntworks/apps/life/index.js":[function(require,module,exports){
+var doc  = require('global/document')
+var merc = require('mercury')
+var h    = merc.h
+
+
+var Grid = require('./components/grid')
+var Life = require('./components/life')
+
+var grid = Grid()
+var life = Life(grid.state)
+
+boot(doc.body, grid.state, Grid.render)
+
+function boot(elem, observ, render, opts) {
+  var del = new merc.Delegator(opts);
+  ['mouseover', 'mouseout'].forEach(function(ev) {
+    del.listenTo(ev)
+  })
+  var loop = merc.main(observ(), render, opts)
+  elem.appendChild(loop.target)
+  return observ(loop.update)
+}
+
+},{"./components/grid":"/home/bluntworks/apps/life/components/grid/index.js","./components/life":"/home/bluntworks/apps/life/components/life/index.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/node_modules/global/document.js":[function(require,module,exports){
 (function (global){
 var topLevel = typeof global !== 'undefined' ? global :
     typeof window !== 'undefined' ? window : {}

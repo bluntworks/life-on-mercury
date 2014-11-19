@@ -3,6 +3,7 @@ var merc = require('mercury')
 var m2g  = require('./mouse-grid').m2g
 var g2m  = require('./mouse-grid').g2m
 var raf  = require('raf')
+var dump = require('../../dump')
 
 module.exports = Canvas
 
@@ -31,9 +32,10 @@ Canvas.prototype.update = function(prev, el) {
   var grid = this.data.grid
   var rc = cc = this.data.cc
 
+  //dump('canvas', grid)
+
   raf(function() {
     ctx.clearRect(0, 0, 800, 800)
-
     for(var r = 0; r < rc; r++) {
       for(var c = 0; c < cc; c++) {
         var cell = {

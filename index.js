@@ -4,7 +4,10 @@ var h    = merc.h
 
 
 var Grid = require('./components/grid')
+var Life = require('./components/life')
+
 var grid = Grid()
+var life = Life(grid.state)
 
 boot(doc.body, grid.state, Grid.render)
 

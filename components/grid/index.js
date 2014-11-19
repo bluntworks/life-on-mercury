@@ -4,6 +4,7 @@ var Canvas    = require('./canvas')
 var MouseDown = require('./mouse').MouseDown
 var MouseOver = require('./mouse').MouseOver
 var m2g       = require('./mouse-grid').m2g
+var dump      = require('../../dump')
 
 module.exports = grid
 
@@ -21,7 +22,7 @@ function grid(data) {
   var events = initEvents(state)
   state.events.set(events)
 
-  log('grid', state.grid, state.grid())
+  //log('grid', state.grid, state.grid())
 
   return {
     state: state,
@@ -47,8 +48,11 @@ function initEvents(state) {
 
   events.mousedown(function(xy) {
     var rc = m2g(xy, state.cc())
+    //dump('mdown', state.grid())
+    //log('RC b4', state.grid.get(rc.r)())
     var c = state.grid.get(rc.r).get(rc.c);
     (c()) ? c.set(false) : c.set(true)
+    //log('RC af', state.grid.get(rc.r)())
   })
 
   events.mouseover(function(ev) {
