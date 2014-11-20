@@ -15,6 +15,7 @@ function grid(data) {
     cc: merc.value(10),
     mx: merc.value(null),
     my: merc.value(null),
+    over: merc.array([]),
     grid: initGrid(data),
     events: merc.struct({})
   })
@@ -35,7 +36,8 @@ grid.render = function(state) {
 
   var view = h('div#life', {
     'ev-mousedown': MouseDown(events.mousedown),
-    'ev-mouseover': MouseOver(events.mouseover)
+    'ev-mouseover': MouseOver(events.mouseover),
+    'ev-mouseup': MouseDown(events.mouseup)
   }, [ new Canvas(state) ])
 
   return view
@@ -43,24 +45,42 @@ grid.render = function(state) {
 
 function initEvents(state) {
   var events = merc.input([
-    'mousedown', 'mouseover', 'mouseout'
+    'mousedown', 'mouseover', 'mouseout', 'mouseup'
   ])
 
   events.mousedown(function(xy) {
     var rc = m2g(xy, state.cc())
-    //dump('mdown', state.grid())
-    //log('RC b4', state.grid.get(rc.r)())
     var c = state.grid.get(rc.r).get(rc.c);
     (c()) ? c.set(false) : c.set(true)
-    //log('RC af', state.grid.get(rc.r)())
   })
 
-  events.mouseover(function(ev) {
-    state.mx.set(ev.x)
-    state.my.set(ev.y)
+  events.mouseover(function(xy) {
+    if(xy.isdown) {
+      var rc = m2g(xy, state.cc())
+      if(indexOf(state.over(), rc) < 0) state.over.push(rc)
+    }
+    state.mx.set(xy.x)
+    state.my.set(xy.y)
+  })
+
+  events.mouseup(function(xy) {
+    var over = state.over()
+    for(var i = 1; i < over.length ; i++) {
+      var o = over[i]
+      var c = state.grid.get(o.r).get(o.c)
+      c.set(!c())
+    }
+    state.over.set([])
   })
 
   return events
+}
+
+function indexOf(arr, it) {
+  for(var i = 0, len = arr.length; i < len; i++) {
+    if(arr[i].r === it.r && arr[i].c === it.c) return i
+  }
+  return -1
 }
 
 function initGrid(data) {

@@ -36,7 +36,7 @@ function MouseOver(fn, value) {
 
 MouseOver.prototype.handleEvent = function(ev) {
   var fn = this.fn
-
+  var isdown = false
   var src = ev.target
 
   function onmove(ev) {
@@ -44,16 +44,29 @@ MouseOver.prototype.handleEvent = function(ev) {
     var cY  = ev.offSetY || ev.layerY
     fn({
       x: cX,
-      y: cY
+      y: cY,
+      isdown: isdown
     })
+  }
+
+  function ondown(ev) {
+    isdown = true
+  }
+
+  function onup(ev) {
+    isdown = false
   }
 
   function onout(ev) {
     window.removeEventListener('mousemove', onmove)
+    window.removeEventListener('mousedown', ondown)
+    window.removeEventListener('mouseup', onup)
     src.removeEventListener('mouseout', onout)
   }
 
   window.addEventListener('mousemove', onmove)
+  window.addEventListener('mousedown', ondown)
+  window.addEventListener('mouseup', onup)
   src.addEventListener('mouseout', onout)
 
 }

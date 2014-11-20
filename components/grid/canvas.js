@@ -28,11 +28,10 @@ Canvas.prototype.update = function(prev, el) {
 
   var mx = this.data.mx
   var my = this.data.my
-  var over = m2g({ x: mx, y: my }, this.data.cc)
   var grid = this.data.grid
   var rc = cc = this.data.cc
-
-  //dump('canvas', grid)
+  var overs = this.data.over
+  var over = m2g({ x: mx, y: my }, 10)
 
   raf(function() {
     ctx.clearRect(0, 0, 800, 800)
@@ -54,6 +53,13 @@ Canvas.prototype.update = function(prev, el) {
           ctx.fillRect(xy.x, xy.y, 80, 80)
         }
       }
+    }
+
+    ctx.fillStyle = '#26697a'
+    for(var i = 1; i < overs.length; i++) {
+      var xy = g2m(overs[i], 10)
+      if(i === overs.length -1) ctx.fillStyle = '#0cf'
+      ctx.fillRect(xy.x, xy.y, 80, 80)
     }
 
     ctx.strokeStyle = '#303030'
