@@ -12,7 +12,10 @@ function grid(data) {
   data = (data) || {}
 
   var state = merc.struct({
-    cc: merc.value(10),
+    gw: merc.value(data.gw),
+    gh: merc.value(data.gh),
+    rc: merc.value(data.rc),
+    cc: merc.value(data.cc),
     mx: merc.value(null),
     my: merc.value(null),
     over: merc.array([]),
@@ -23,12 +26,30 @@ function grid(data) {
   var events = initEvents(state)
   state.events.set(events)
 
-  //log('grid', state.grid, state.grid())
-
   return {
     state: state,
     events: events
   }
+}
+
+function initGrid(data) {
+  var rc = data.rc
+  var cc = data.cc
+  var rows = merc.array([])
+
+  for(var r = 0; r < rc; r++) {
+    var col = merc.array([])
+    for(var c = 0; c < cc; c++) {
+      col.push(initCell(r,c))
+    }
+    rows.push(col)
+  }
+
+  return rows
+}
+
+function initCell(r, c) {
+  return merc.value(false)
 }
 
 grid.render = function(state) {
@@ -49,15 +70,15 @@ function initEvents(state) {
   ])
 
   events.mousedown(function(xy) {
-    var rc = m2g(xy, state.cc())
-    var c = state.grid.get(rc.r).get(rc.c);
+    var roco = m2g(xy, state.gw() / state.cc(), state.gh() / state.rc())
+    var c = state.grid.get(roco.r).get(roco.c);
     (c()) ? c.set(false) : c.set(true)
   })
 
   events.mouseover(function(xy) {
     if(xy.isdown) {
-      var rc = m2g(xy, state.cc())
-      if(indexOf(state.over(), rc) < 0) state.over.push(rc)
+      var roco = m2g(xy, state.gw() / state.cc(), state.gh() / state.rc())
+      if(indexOf(state.over(), roco) < 0) state.over.push(roco)
     }
     state.mx.set(xy.x)
     state.my.set(xy.y)
@@ -83,21 +104,4 @@ function indexOf(arr, it) {
   return -1
 }
 
-function initGrid(data) {
-  var rc = cc = 10
-  var rows = merc.array([])
 
-  for(var r = 0; r < rc; r++) {
-    var col = merc.array([])
-    for(var c = 0; c < cc; c++) {
-      col.push(initCell(r,c))
-    }
-    rows.push(col)
-  }
-
-  return rows
-}
-
-function initCell(r, c) {
-  return merc.value(false)
-}

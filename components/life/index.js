@@ -65,10 +65,14 @@ function initEvents(state, gridState) {
       raf(function() {
         //if(stopped) return
         var grid = gridState.grid
-        var next = genr(grid(), 10, 10)
-        for(var r = 0; r < 10; r++) {
-          for(var c = 0; c < 10; c++) {
+        var rc   = gridState.rc()
+        var cc   = gridState.cc()
+        var next = genr(grid(), rc, cc)
+        for(var r = 0; r < rc; r++) {
+          for(var c = 0; c < cc; c++) {
             grid.get(r).get(c).set(next[r][c])
+            //log('set')
+            //grid[r][c].set(next[r][c])
           }
         }
         if(state.looping()) setTimeout(tik, tok)

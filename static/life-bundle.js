@@ -18,8 +18,10 @@ Canvas.prototype.type = 'Widget'
 
 Canvas.prototype.init = function() {
   var el = doc.createElement('canvas')
-  el.width = 800
-  el.height = 800
+
+  el.width  = this.data.gw
+  el.height = this.data.gh
+
   this.update(null, el)
   return el
 }
@@ -27,15 +29,27 @@ Canvas.prototype.init = function() {
 Canvas.prototype.update = function(prev, el) {
   var ctx = el.getContext('2d')
 
+  var grid = this.data.grid
+
+  //log('canvas grid')
+  //grid width/height
+  var gw = this.data.gw
+  var gh = this.data.gh
+  //row / column counts
+  var rc = this.data.rc
+  var cc = this.data.cc
+  //cell width/height
+  var cw = gw / cc
+  var ch = gh / rc
+
+  var overs = this.data.over
   var mx = this.data.mx
   var my = this.data.my
-  var grid = this.data.grid
-  var rc = cc = this.data.cc
-  var overs = this.data.over
-  var over = m2g({ x: mx, y: my }, 10)
+  var over = m2g({ x: mx, y: my }, cw, ch)
+
 
   raf(function() {
-    ctx.clearRect(0, 0, 800, 800)
+    ctx.clearRect(0, 0, gw, gh)
     for(var r = 0; r < rc; r++) {
       for(var c = 0; c < cc; c++) {
         var cell = {
@@ -44,38 +58,40 @@ Canvas.prototype.update = function(prev, el) {
           c: c
         }
 
-        var xy = g2m(cell, 10)
+        var xy = g2m(cell, cw, ch)
 
         if(over.r === r && over.c === c) {
           ctx.fillStyle = (cell.state) ? '#0cf' : '#444'
-          ctx.fillRect(xy.x, xy.y, 80, 80)
+          ctx.fillRect(xy.x, xy.y, cw, ch)
         } else if(cell.state) {
           ctx.fillStyle = '#0cf'
-          ctx.fillRect(xy.x, xy.y, 80, 80)
+          ctx.fillRect(xy.x, xy.y, cw, ch)
         }
       }
     }
 
     ctx.fillStyle = '#26697a'
     for(var i = 1; i < overs.length; i++) {
-      var xy = g2m(overs[i], 10)
+      var xy = g2m(overs[i], cw, ch)
       if(i === overs.length -1) ctx.fillStyle = '#0cf'
-      ctx.fillRect(xy.x, xy.y, 80, 80)
+      ctx.fillRect(xy.x, xy.y, cw, ch)
     }
 
     ctx.strokeStyle = '#303030'
+    // draw horiontal grid lines (rows)
     for(var i = 1; i < rc; i++) {
-      var ly = i * 80
+      var ly = i * ch
       ctx.beginPath()
       ctx.moveTo(0, ly)
-      ctx.lineTo(800, ly)
+      ctx.lineTo(gh, ly)
       ctx.stroke()
     }
-    for(var i = 1; i < rc; i++) {
-      var ly = i * 80
+    // draw verctical grid lines (cols)
+    for(var i = 1; i < cc; i++) {
+      var ly = i * cw
       ctx.beginPath()
       ctx.moveTo(ly, 0)
-      ctx.lineTo(ly, 800)
+      ctx.lineTo(ly, gw)
       ctx.stroke()
     }
   })
@@ -96,7 +112,10 @@ function grid(data) {
   data = (data) || {}
 
   var state = merc.struct({
-    cc: merc.value(10),
+    gw: merc.value(data.gw),
+    gh: merc.value(data.gh),
+    rc: merc.value(data.rc),
+    cc: merc.value(data.cc),
     mx: merc.value(null),
     my: merc.value(null),
     over: merc.array([]),
@@ -107,12 +126,30 @@ function grid(data) {
   var events = initEvents(state)
   state.events.set(events)
 
-  //log('grid', state.grid, state.grid())
-
   return {
     state: state,
     events: events
   }
+}
+
+function initGrid(data) {
+  var rc = data.rc
+  var cc = data.cc
+  var rows = merc.array([])
+
+  for(var r = 0; r < rc; r++) {
+    var col = merc.array([])
+    for(var c = 0; c < cc; c++) {
+      col.push(initCell(r,c))
+    }
+    rows.push(col)
+  }
+
+  return rows
+}
+
+function initCell(r, c) {
+  return merc.value(false)
 }
 
 grid.render = function(state) {
@@ -133,15 +170,15 @@ function initEvents(state) {
   ])
 
   events.mousedown(function(xy) {
-    var rc = m2g(xy, state.cc())
-    var c = state.grid.get(rc.r).get(rc.c);
+    var roco = m2g(xy, state.gw() / state.cc(), state.gh() / state.rc())
+    var c = state.grid.get(roco.r).get(roco.c);
     (c()) ? c.set(false) : c.set(true)
   })
 
   events.mouseover(function(xy) {
     if(xy.isdown) {
-      var rc = m2g(xy, state.cc())
-      if(indexOf(state.over(), rc) < 0) state.over.push(rc)
+      var roco = m2g(xy, state.gw() / state.cc(), state.gh() / state.rc())
+      if(indexOf(state.over(), roco) < 0) state.over.push(roco)
     }
     state.mx.set(xy.x)
     state.my.set(xy.y)
@@ -167,24 +204,7 @@ function indexOf(arr, it) {
   return -1
 }
 
-function initGrid(data) {
-  var rc = cc = 10
-  var rows = merc.array([])
 
-  for(var r = 0; r < rc; r++) {
-    var col = merc.array([])
-    for(var c = 0; c < cc; c++) {
-      col.push(initCell(r,c))
-    }
-    rows.push(col)
-  }
-
-  return rows
-}
-
-function initCell(r, c) {
-  return merc.value(false)
-}
 
 },{"../../dump":"/home/bluntworks/apps/life/dump.js","./canvas":"/home/bluntworks/apps/life/components/grid/canvas.js","./mouse":"/home/bluntworks/apps/life/components/grid/mouse.js","./mouse-grid":"/home/bluntworks/apps/life/components/grid/mouse-grid.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/components/grid/mouse-grid.js":[function(require,module,exports){
 var merc = require('mercury')
@@ -194,22 +214,13 @@ module.exports = {
   g2m: grid2mouse
 }
 
-function mouse2grid(xy, cc) {
-  var w = h = 800
-  var cw = w / cc
-  var ch = h / cc
+function mouse2grid(xy, cw, ch) {
   var c = Math.floor(xy.x / cw)
   var r = Math.floor(xy.y / ch)
-
-  return {
-    r: r,
-    c: c
-  }
+  return { r: r,  c: c  }
 }
 
-function grid2mouse(rc, cc) {
-  var w = h = 800
-  var cw = ch = w / cc
+function grid2mouse(rc, cw, ch) {
   return {
     x: Math.floor(rc.c * cw),
     y: Math.floor(rc.r * ch)
@@ -358,10 +369,14 @@ function initEvents(state, gridState) {
       raf(function() {
         //if(stopped) return
         var grid = gridState.grid
-        var next = genr(grid(), 10, 10)
-        for(var r = 0; r < 10; r++) {
-          for(var c = 0; c < 10; c++) {
+        var rc   = gridState.rc()
+        var cc   = gridState.cc()
+        var next = genr(grid(), rc, cc)
+        for(var r = 0; r < rc; r++) {
+          for(var c = 0; c < cc; c++) {
             grid.get(r).get(c).set(next[r][c])
+            //log('set')
+            //grid[r][c].set(next[r][c])
           }
         }
         if(state.looping()) setTimeout(tik, tok)
@@ -444,9 +459,18 @@ var h    = merc.h
 var Grid = require('./components/grid')
 var Life = require('./components/life')
 
-var grid = Grid()
-var life = Life(grid.state)
+var grid = Grid({
+  gw: 800,
+  gh: 800,
+  rc: 20,
+  cc: 20,
+})
 
+var life  = Life(grid.state)
+var snips = Snippets()
+
+
+//Kick it all off
 boot(doc.body, grid.state, Grid.render)
 
 function boot(elem, observ, render, opts) {

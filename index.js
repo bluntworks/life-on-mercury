@@ -6,9 +6,18 @@ var h    = merc.h
 var Grid = require('./components/grid')
 var Life = require('./components/life')
 
-var grid = Grid()
-var life = Life(grid.state)
+var grid = Grid({
+  gw: 800,
+  gh: 800,
+  rc: 20,
+  cc: 20,
+})
 
+var life  = Life(grid.state)
+var snips = Snippets()
+
+
+//Kick it all off
 boot(doc.body, grid.state, Grid.render)
 
 function boot(elem, observ, render, opts) {
