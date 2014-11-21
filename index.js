@@ -2,19 +2,20 @@ var doc  = require('global/document')
 var merc = require('mercury')
 var h    = merc.h
 
-
-var Grid = require('./components/grid')
-var Life = require('./components/life')
-
-var grid = Grid({
+var data = {
   gw: 800,
   gh: 800,
   rc: 20,
-  cc: 20,
-})
+  cc: 20
+}
 
-var life  = Life(grid.state)
-var snips = Snippets()
+var Grid      = require('./components/grid')
+var Transform = require('./components/transform')
+var Snippets  = require('./components/snippets')
+
+var grid = Grid(data)
+var tarnsform = Transform(grid.state)
+var snippets = Snippets()
 
 
 //Kick it all off
