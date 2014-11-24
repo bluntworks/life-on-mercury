@@ -28,8 +28,27 @@ function grid(data) {
 
   return {
     state: state,
-    events: events
+    events: events,
+    addSnip: addSnip,
+    reset: reset
   }
+
+  function addSnip(grid) {
+    grid.forEach(function(col, r) {
+      col.forEach(function(cell, c) {
+        state.grid.get(r).get(c).set(cell)
+      })
+    })
+  }
+
+  function reset() {
+    state.grid.forEach(function(col) {
+      col.forEach(function(cell) {
+        cell.set(false)
+      })
+    })
+  }
+
 }
 
 function initGrid(data) {

@@ -60,7 +60,8 @@ Canvas.prototype.update = function(prev, el) {
         var xy = g2m(cell, cw, ch)
 
         if(over.r === r && over.c === c) {
-          ctx.fillStyle = (cell.state) ? '#0cf' : '#444'
+          ctx.fillStyle = (cell.state) ? '#0cf'
+            : (10 == r || 10 == c ) ? '#333' : '#444'
           ctx.fillRect(xy.x, xy.y, cw, ch)
         } else if(cell.state) {
           ctx.fillStyle = '#0cf'

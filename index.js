@@ -1,25 +1,71 @@
-var doc  = require('global/document')
-var merc = require('mercury')
-var h    = merc.h
+var doc   = require('global/document')
+var doc   = require('global/document')
+var merc  = require('mercury')
+var h     = merc.h
 
 var data = {
   gw: 800,
   gh: 800,
-  rc: 20,
-  cc: 20
+  rc: 21,
+  cc: 21
 }
 
 var Grid      = require('./components/grid')
 var Transform = require('./components/transform')
 var Snippets  = require('./components/snippets')
 
-var grid = Grid(data)
-var tarnsform = Transform(grid.state)
-var snippets = Snippets()
+var grid      = Grid(data)
+var transform = Transform(grid.state)
+var snippets  = Snippets()
 
+function State() {
+  return merc.struct({
+    grid: grid.state,
+    snips: snippets.state
+  })
+}
+
+events()
+
+function events() {
+  var del = new merc.Delegator()
+  del.addGlobalEventListener('keyup', function(ev) {
+    log('keycode', ev.keyCode)
+    if(32 == ev.keyCode) handleSpace()
+    if(67 == ev.keyCode) handleReset()
+  })
+
+  //snippets
+  snippets.events.click(function(ev) {
+    log('snip clicked', ev)
+    grid.addSnip(ev.grid)
+  })
+}
+
+
+
+var spaced = false
+function handleSpace() {
+  if(spaced) return spaced = false
+  log('do spacing save')
+  spaced = true
+  snippets.add(grid.state.grid())
+}
+
+function handleReset() {
+  grid.reset()
+}
+
+
+function render(state) {
+  return h('div#main', [
+    h('div#left', [ Grid.render(state.grid) ]),
+    h('div#right', [ Snippets.render(state.snips) ])
+  ])
+}
 
 //Kick it all off
-boot(doc.body, grid.state, Grid.render)
+boot(doc.body, State(), render)
 
 function boot(elem, observ, render, opts) {
   var del = new merc.Delegator(opts);
