@@ -321,7 +321,95 @@ MouseOver.prototype.handleEvent = function(ev) {
 
 }
 
-},{"global/window":"/home/bluntworks/apps/life/node_modules/global/window.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/components/snippets/index.js":[function(require,module,exports){
+},{"global/window":"/home/bluntworks/apps/life/node_modules/global/window.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/components/settings/index.js":[function(require,module,exports){
+var merc = require('mercury')
+var h    = merc.h
+
+var clickEvent = require('../../lib/click-event')
+
+module.exports = Settings
+
+
+function Settings(data) {
+  var state = merc.struct({
+    cc: merc.value(data.cc || 11),
+    rc: merc.value(data.rc || 11),
+    linked: merc.value(true),
+    tok: merc.value(data.tok || 250),
+    gen: merc.value(10),
+    events: merc.struct({})
+  })
+
+  var events = merc.input(['click', 'change'])
+
+  state.events.set(events)
+
+  return {
+    state: state,
+    events: events
+  }
+
+}
+
+Settings.render = function (state) {
+  var events = state.events
+
+  return h('div#dashboard', [
+
+    h('div.fld', [
+      h('label', { for: 'cc' }, [ 'Column Count' ]),
+      h('input', {
+        type: 'text',
+        name: 'cc',
+        value: state.cc,
+        'ev-event': merc.changeEvent(events.change)
+      })
+    ]),
+
+    h('div.fld.link', [
+      h('a', {
+        href: '#linked',
+        'ev-click': clickEvent(events.click, {
+          link: !state.linked,
+          preventDefault: true
+        })
+      }, [ (state.linked) ? h('i.fa.fa-link') : h('i.fa.fa-unlink') ])
+    ]),
+
+    h('div.fld', [
+      h('label', { for: 'cc' }, [ 'Row Count' ]),
+      h('input', {
+        type: 'text',
+        name: 'rc',
+        value: state.rc,
+        'ev-event': merc.changeEvent(events.change)
+      })
+    ]),
+
+    h('div.fld', [
+      h('label', { for: 'tok' }, [ 'Genartion Time' ]),
+      h('input', {
+        type: 'text',
+        name: 'tok',
+        value: state.tok,
+        'ev-event': merc.changeEvent(events.change)
+      })
+    ]),
+
+    h('div.fld', [
+      h('label', { for: 'cycle' }, [ 'Generation' ]),
+      h('input', {
+        type: 'text',
+        name: 'gen',
+        value: state.gen,
+        disabled: true
+      })
+    ]),
+
+  ])
+}
+
+},{"../../lib/click-event":"/home/bluntworks/apps/life/lib/click-event.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/components/snippets/index.js":[function(require,module,exports){
 var merc    = require('mercury')
 var h       = merc.h
 var mo      = require('moment')
@@ -588,21 +676,25 @@ var data = {
   gw: 800,
   gh: 800,
   rc: 21,
-  cc: 21
+  cc: 21,
+  tok: 125
 }
 
 var Grid      = require('./components/grid')
 var Transform = require('./components/transform')
 var Snippets  = require('./components/snippets')
+var Settings  = require('./components/settings')
 
 var grid      = Grid(data)
 var transform = Transform(grid.state)
 var snippets  = Snippets()
+var settings  = Settings(data)
 
 function State() {
   return merc.struct({
     grid: grid.state,
-    snips: snippets.state
+    snips: snippets.state,
+    settings: settings.state
   })
 }
 
@@ -611,15 +703,44 @@ events()
 function events() {
   var del = new merc.Delegator()
   del.addGlobalEventListener('keyup', function(ev) {
-    log('keycode', ev.keyCode)
     if(32 == ev.keyCode) handleSpace()
     if(67 == ev.keyCode) handleReset()
   })
 
   //snippets
   snippets.events.click(function(ev) {
-    log('snip clicked', ev)
     grid.addSnip(ev.grid)
+  })
+
+  //settings
+  settings.events.change(function(ev) {
+    var key = Object.keys(ev)[0]
+    var val = ev[key]
+    log('settings change', ev, key, val)
+
+    if(val < 2 || val > data.rc) return
+    if('cc' === key || 'rc' === key) {
+      if(settings.state.linked()) {
+        grid.state.cc.set(val)
+        grid.state.rc.set(val)
+        settings.state.cc.set(val)
+        settings.state.rc.set(val)
+      } else {
+        grid.state[key].set(val)
+        settings.state[key].set(val)
+      }
+    }
+
+    if('tok' === key) {
+      transform.tok.set(val)
+      settings.state.tok.set(val)
+    }
+
+  })
+
+  settings.events.click(function(ev) {
+    settings.state.linked.set(ev.link)
+    log('settings click', ev, arguments)
   })
 }
 
@@ -628,7 +749,6 @@ function events() {
 var spaced = false
 function handleSpace() {
   if(spaced) return spaced = false
-  log('do spacing save')
   spaced = true
   snippets.add(grid.state.grid())
 }
@@ -640,13 +760,14 @@ function handleReset() {
 
 function render(state) {
   return h('div#main', [
+    h('div#top', [ Settings.render(state.settings) ]),
     h('div#left', [ Grid.render(state.grid) ]),
-    h('div#right', [ Snippets.render(state.snips) ])
+    h('div#right', [ Snippets.render(state.snips) ]),
   ])
 }
 
 //Kick it all off
-boot(doc.body, State(), render)
+boot(doc.body, State(), render, { preventDefault: true })
 
 function boot(elem, observ, render, opts) {
   var del = new merc.Delegator(opts);
@@ -658,7 +779,26 @@ function boot(elem, observ, render, opts) {
   return observ(loop.update)
 }
 
-},{"./components/grid":"/home/bluntworks/apps/life/components/grid/index.js","./components/snippets":"/home/bluntworks/apps/life/components/snippets/index.js","./components/transform":"/home/bluntworks/apps/life/components/transform/index.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/node_modules/global/document.js":[function(require,module,exports){
+},{"./components/grid":"/home/bluntworks/apps/life/components/grid/index.js","./components/settings":"/home/bluntworks/apps/life/components/settings/index.js","./components/snippets":"/home/bluntworks/apps/life/components/snippets/index.js","./components/transform":"/home/bluntworks/apps/life/components/transform/index.js","global/document":"/home/bluntworks/apps/life/node_modules/global/document.js","mercury":"/home/bluntworks/apps/life/node_modules/mercury/index.js"}],"/home/bluntworks/apps/life/lib/click-event.js":[function(require,module,exports){
+//var BaseEvent   = require('value-event/base-event')
+var BaseEvent   = require('mercury/node_modules/value-event/base-event')
+var xtend       = require('xtend')
+
+module.exports  = BaseEvent(mouseLambda)
+
+function mouseLambda(ev) {
+  var opts = this.opts
+  var data = {
+    src: ev.target,
+    x: ev.offsetX || ev.layerX,
+    y: ev.offsetY || ev.layerY
+  }
+
+  ev.preventDefault()
+  return xtend(this.data, data)
+}
+
+},{"mercury/node_modules/value-event/base-event":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/base-event.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/node_modules/global/document.js":[function(require,module,exports){
 (function (global){
 var topLevel = typeof global !== 'undefined' ? global :
     typeof window !== 'undefined' ? window : {}
@@ -693,7 +833,6 @@ if (typeof window !== "undefined") {
 },{}],"/home/bluntworks/apps/life/node_modules/mercury/index.js":[function(require,module,exports){
 var SingleEvent = require('geval/single');
 var MultipleEvent = require('geval/multiple');
-var BaseEvent = require('value-event/base-event')
 var xtend     = require('xtend')
 /*
     Pro tip: Don't require `mercury` itself.
@@ -713,7 +852,6 @@ var mercury = module.exports = {
     submitEvent: require('value-event/submit'),
     changeEvent: require('value-event/change'),
     keyEvent: require('value-event/key'),
-    mouseEvent: BaseEvent(mouseLambda),
 
     // State
     array: require('observ-array'),
@@ -770,18 +908,9 @@ function app(elem, observ, render, opts) {
 
 //var mouseEvent = BaseEvent(mouseLambda)
 
-function mouseLambda(ev) {
-  var opts = this.opts
-  var data = {
-    src: ev.target,
-    x: ev.offsetX || ev.layerX,
-    y: ev.offsetY || ev.layerY
-  }
 
-  return xtend(this.data, data)
-}
 
-},{"dom-delegator":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/index.js","geval/multiple":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/multiple.js","geval/single":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/single.js","main-loop":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/main-loop/index.js","observ":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/index.js","observ-array":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-array/index.js","observ-struct":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-struct/index.js","observ-varhash":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-varhash/index.js","observ/computed":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/computed.js","observ/watch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/watch.js","value-event/base-event":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/base-event.js","value-event/change":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/change.js","value-event/event":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/event.js","value-event/key":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/key.js","value-event/submit":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/submit.js","value-event/value":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/value.js","vdom-thunk":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom-thunk/index.js","vdom/create-element":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/create-element.js","vdom/patch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/patch.js","virtual-hyperscript":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/index.js","virtual-hyperscript/svg":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/svg.js","vtree/diff":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vtree/diff.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/add-event.js":[function(require,module,exports){
+},{"dom-delegator":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/index.js","geval/multiple":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/multiple.js","geval/single":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/geval/single.js","main-loop":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/main-loop/index.js","observ":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/index.js","observ-array":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-array/index.js","observ-struct":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-struct/index.js","observ-varhash":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ-varhash/index.js","observ/computed":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/computed.js","observ/watch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/observ/watch.js","value-event/change":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/change.js","value-event/event":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/event.js","value-event/key":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/key.js","value-event/submit":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/submit.js","value-event/value":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/value-event/value.js","vdom-thunk":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom-thunk/index.js","vdom/create-element":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/create-element.js","vdom/patch":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vdom/patch.js","virtual-hyperscript":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/index.js","virtual-hyperscript/svg":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/virtual-hyperscript/svg.js","vtree/diff":"/home/bluntworks/apps/life/node_modules/mercury/node_modules/vtree/diff.js","xtend":"/home/bluntworks/apps/life/node_modules/xtend/immutable.js"}],"/home/bluntworks/apps/life/node_modules/mercury/node_modules/dom-delegator/add-event.js":[function(require,module,exports){
 var DataSet = require("data-set")
 
 module.exports = addEvent

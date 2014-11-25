@@ -20,6 +20,7 @@ body
   relative top left
   width 80%
   height 100%
+  height calc(100% \- 135px)
   background #333
   float left
 
@@ -27,7 +28,7 @@ body
   relative top left
   float right
   width 20%
-  height 100%
+  height calc(100% \- 135px)
   background #323232
 
 #right #snips
@@ -61,10 +62,50 @@ body
     width 100%
     height 100%
 
-.foo div
-  background #444
-  margin 20px
+#top
+  relative top left
+  width 100%
+  height 135px
+  float left
+  background #353535
 
+.fld
+  relative top left
+  float left
+  margin 10px
+  text-align center
 
+.fld label
+  display block
+  color #555
+  font-size 10px
+
+.fld input
+  padding 10px
+  background #313131
+  font-size 20px
+  color #666
+  text-align center
+  float left
+  clear both
+  border 1px solid #363636
+  width 75px
+  height 75px
+
+.fld.link
+  margin-top 66px
+  float left
+  width 20px
+  height 20px
+  a
+    display block
+    width 20px
+    height 20px
+    color #777
+    text-decoration none
+    -webkit-transform rotate(-45deg)
+    i
+      width 20px
+      height 20px
 
 @import 'tail'
