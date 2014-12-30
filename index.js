@@ -1,13 +1,12 @@
 var doc   = require('global/document')
-var doc   = require('global/document')
 var merc  = require('mercury')
 var h     = merc.h
 
 var data = {
   gw: 800,
   gh: 800,
-  rc: 21,
-  cc: 21,
+  rc: 11,
+  cc: 11,
   tok: 125
 }
 
