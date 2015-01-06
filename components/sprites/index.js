@@ -1,12 +1,12 @@
 var merc    = require('mercury')
 var h       = merc.h
 var mo      = require('moment')
-var sniplet = require('./snip-canvas')
+var sprite  = require('./sprite-canvas')
 var extend  = require('xtend')
 
-module.exports = snippets
+module.exports = sprites
 
-function snippets(data) {
+function sprites(data) {
   var state = merc.struct({
     items: merc.array([]),
     events: merc.struct({})
@@ -23,14 +23,18 @@ function snippets(data) {
 
   function add(data) {
     if(isEmpty(data)) return
-    state.items.push(snipItem(data))
+    state.items.push(spriteItem(data))
   }
 
 }
 
-snippets.render = function(state) {
-  return h('div#snips', [
-    h('ul', state.items.map(function(it, i) {
+sprites.render = function(state) {
+  var items = state.items
+  return h('div#sprites', [
+:qa
+
+
+    h('ul', items.map(function(it, i) {
       it.indx = i
       return itemRender(it, state.events)
     }))
@@ -38,9 +42,9 @@ snippets.render = function(state) {
 }
 
 function itemRender(state, events) {
-  return h('li.snip', {
+  return h('li.sprite', {
    'ev-click': merc.event(events.click, state)
-  }, [ sniplet(state) ])
+  }, [ sprite(state) ])
 }
 
 function isEmpty(data) {
@@ -50,8 +54,10 @@ function isEmpty(data) {
   }, 0)
 }
 
-function snipItem(data) {
+var sid = 0
+function spriteItem(data) {
   return merc.struct({
+    id: merc.value(sid++),
     title: merc.value('unnamed'),
     timestamp: mo(),
     grid: merc.array(data),

@@ -34,9 +34,11 @@ Canvas.prototype.update = function(prev, el) {
   //grid width/height
   var gw = this.data.gw
   var gh = this.data.gh
+
   //row / column counts
   var rc = this.data.rc
   var cc = this.data.cc
+
   //cell width/height
   var cw = gw / cc
   var ch = gh / rc

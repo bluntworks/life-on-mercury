@@ -29,11 +29,11 @@ function grid(data) {
   return {
     state: state,
     events: events,
-    addSnip: addSnip,
+    addSprite: addSprite,
     reset: reset
   }
 
-  function addSnip(grid) {
+  function addSprite(grid) {
     grid.forEach(function(col, r) {
       col.forEach(function(cell, c) {
         state.grid.get(r).get(c).set(cell)
