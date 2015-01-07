@@ -412,22 +412,25 @@ table{border-collapse:separate;border-spacing:0;vertical-align:middle}
 caption,th,td{text-align:left;font-weight:normal;vertical-align:middle}
 a img{border:none}
 html,body{width:100%;height:100%;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-o-box-sizing:boder-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
-body{font:14px/18px 'Lucida Grande',sans-serif;color:#dedede;background:#222}
+body{font:14px/18px 'Lucida Grande',sans-serif;color:#dedede;background:#272727}
 #main{position:relative;top:0;left:0;float:left;width:100%;height:100%}
-#left{position:relative;top:0;left:0;z-index:0;width:100%;height:100%;height:calc(100% - 135px);background:#222;float:left}
-#right{position:fixed;top:0;right:0;float:right;width:140px;height:100%;background:#222}
+#left{position:relative;top:0;left:0;z-index:0;width:100%;height:100%;height:calc(100% - 135px);background:#272727;float:left}
+#right{position:fixed;top:10px;right:0;z-index:10;float:right;width:140px;height:100%;background:#272727}
 #right #sprites{position:relative;top:0;left:0;width:100%;height:100%;overflow:hidden;overflow-y:scroll;}
 #right #sprites li.sprite{float:left;width:121px;height:121px;margin:5px 0;}
-#right #sprites li.sprite canvas{margin:auto;background:#323232;border:1px solid #383838;cursor:pointer;opacity:.7;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";filter:alpha(opacity=70);}
+#right #sprites li.sprite canvas{margin:auto;background:#323232;border:1px solid #3d3d3d;cursor:pointer;opacity:.7;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";filter:alpha(opacity=70);}
 #right #sprites li.sprite canvas:hover{opacity:1;-ms-filter:none;filter:none}
-#life{position:absolute;top:50%;left:50%;width:600px;height:600px;margin:-300px 0 0 -300px;background:#333;}
-#life canvas{position:relative;top:0;left:0;width:100%;height:100%}
-#top{position:relative;top:0;left:0;width:100%;height:135px;float:left;background:#222}
+#life{position:absolute;top:50%;left:50%;width:600px;height:600px;margin:-300px 0 0 -300px;background:#202020;}
+#life canvas{position:relative;top:0;left:0;width:100%;height:100%;cursor:pointer}
+#top{position:relative;top:0;left:0;width:100%;height:135px;float:left;background:#272727}
 .fld{position:relative;top:0;left:0;float:left;margin:10px;text-align:center}
 .fld label{display:block;color:#efefef;font-size:10px}
-.fld input{padding:10px;background:#222;font-size:20px;color:#efefef;text-align:center;float:left;clear:both;border:1px solid #222;width:75px;height:75px}
+.fld input{padding:10px;background:#272727;font-size:20px;color:#efefef;text-align:center;float:left;clear:both;border:1px solid #272727;width:75px;height:75px}
 .fld.link{margin-top:66px;float:left;width:20px;height:20px;}
 .fld.link a{display:block;width:20px;height:20px;color:#efefef;text-decoration:none;-webkit-transform:rotate(-45deg);}
 .fld.link a i{width:20px;height:20px}
+#space{position:absolute;bottom:0;left:0;z-index:5;width:100%;height:100px;background:#272727;text-align:center;}
+#space button{position:relative;top:0;left:0;width:50%;height:50%;margin:0;background:#292929;color:#444;border:1px solid #343434;font-size:16px;}
+#space button.on{border:1px solid #2b2b2b;background:#272727}
 textarea:hover,input:hover,textarea:active,input:active,textarea:focus,input:focus,button:focus,button:active,button:hover{outline:0 !important;-webkit-appearance:none}
 .ir{display:block;border:0;text-indent:-999em;overflow:hidden;background-color:transparent;background-repeat:no-repeat;text-align:left;direction:ltr;*line-height:0}

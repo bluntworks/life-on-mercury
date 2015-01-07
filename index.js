@@ -13,15 +13,18 @@ var data = {
 var Grid      = require('./components/grid')
 var Transform = require('./components/transform')
 var Sprites   = require('./components/sprites')
+var Space     = require('./components/space')
 
 var grid      = Grid(data)
 var transform = Transform(grid.state)
 var sprites   = Sprites()
+var space     = Space()
 
 function State() {
   return merc.struct({
     grid: grid.state,
-    sprites: sprites.state
+    sprites: sprites.state,
+    space: space.state
   })
 }
 
@@ -38,10 +41,15 @@ function events() {
   sprites.events.click(function(ev) {
     grid.addSprite(ev.grid)
   })
+
+  space.events.click(function() {
+    log('space clicked !!')
+  })
 }
 
 var spaced = false
 function handleSpace() {
+  space.state.on.set(!space.state.on())
   if(spaced) return spaced = false
   spaced = true
   sprites.add(grid.state.grid())
@@ -53,8 +61,9 @@ function handleReset() {
 
 function render(state) {
   return h('div#main', [
-    h('div#left', [ Grid.render(state.grid) ]),
+    h('div#left',  [ Grid.render(state.grid) ]),
     h('div#right', [ Sprites.render(state.sprites) ]),
+    h('div#space', [ Space.render(state.space) ])
   ])
 }
 

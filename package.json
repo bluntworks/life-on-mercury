@@ -1,5 +1,5 @@
 {
-  "name": "life",
+  "name": "life-on-mercury",
   "version": "0.0.1",
   "description": "Game of Death",
   "main": "index.js",
@@ -18,5 +18,8 @@
     "raf": "^2.0.4",
     "value-event": "^4.0.0",
     "xtend": "^4.0.0"
+  },
+  "scripts": {
+    "life": "node ./server.js"
   }
 }
