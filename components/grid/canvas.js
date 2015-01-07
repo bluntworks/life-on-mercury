@@ -7,10 +7,18 @@ var dump = require('../../dump')
 
 module.exports = Canvas
 
+var css = {
+  over  : '#252525',
+  off   : '#202020',
+  on    : '#0cf',
+  drag  : '#26697a',
+  brdr  : '#272727',
+  ctr   : '#212121'
+}
+
 function Canvas(data) {
   if(!(this instanceof Canvas)) return new Canvas(data)
   this.data = data
-  //log('canvas data', this.data)
 }
 
 Canvas.prototype.type = 'Widget'
@@ -30,7 +38,6 @@ Canvas.prototype.update = function(prev, el) {
 
   var grid = this.data.grid
 
-  //log('canvas grid')
   //grid width/height
   var gw = this.data.gw
   var gh = this.data.gh
@@ -38,6 +45,9 @@ Canvas.prototype.update = function(prev, el) {
   //row / column counts
   var rc = this.data.rc
   var cc = this.data.cc
+
+  var midr = (rc % 2) ? Math.floor(rc / 2) : false
+  var midc = (cc % 2) ? Math.floor(cc / 2) : false
 
   //cell width/height
   var cw = gw / cc
@@ -51,6 +61,12 @@ Canvas.prototype.update = function(prev, el) {
 
   raf(function() {
     ctx.clearRect(0, 0, gw, gh)
+
+    //if(midr && midc) {
+    //  ctx.fillstyle = css.ctr
+    //  ctx.fillRect(midc * cw , 0, cw, gh)
+    //}
+
     for(var r = 0; r < rc; r++) {
       for(var c = 0; c < cc; c++) {
         var cell = {
@@ -62,24 +78,24 @@ Canvas.prototype.update = function(prev, el) {
         var xy = g2m(cell, cw, ch)
 
         if(over.r === r && over.c === c) {
-          ctx.fillStyle = (cell.state) ? '#0cf'
-            : (10 == r || 10 == c ) ? '#333' : '#444'
+          ctx.fillStyle = (cell.state) ? css.on : css.over
+            //: (10 == r || 10 == c ) ? css.over : css.over
           ctx.fillRect(xy.x, xy.y, cw, ch)
         } else if(cell.state) {
-          ctx.fillStyle = '#0cf'
+          ctx.fillStyle = css.on
           ctx.fillRect(xy.x, xy.y, cw, ch)
         }
       }
     }
 
-    ctx.fillStyle = '#26697a'
+    ctx.fillStyle = css.drag
     for(var i = 1; i < overs.length; i++) {
       var xy = g2m(overs[i], cw, ch)
-      if(i === overs.length -1) ctx.fillStyle = '#0cf'
+      if(i === overs.length -1) ctx.fillStyle = css.on
       ctx.fillRect(xy.x, xy.y, cw, ch)
     }
 
-    ctx.strokeStyle = '#303030'
+    ctx.strokeStyle = css.brdr
     // draw horiontal grid lines (rows)
     for(var i = 1; i < rc; i++) {
       var ly = i * ch

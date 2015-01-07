@@ -25,17 +25,13 @@ function sprites(data) {
     if(isEmpty(data)) return
     state.items.push(spriteItem(data))
   }
-
 }
 
 sprites.render = function(state) {
   var items = state.items
+
   return h('div#sprites', [
-:qa
-
-
     h('ul', items.map(function(it, i) {
-      it.indx = i
       return itemRender(it, state.events)
     }))
   ])
