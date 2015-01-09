@@ -4,7 +4,6 @@ var Canvas    = require('./canvas')
 var MouseDown = require('./mouse').MouseDown
 var MouseOver = require('./mouse').MouseOver
 var m2g       = require('./mouse-grid').m2g
-var dump      = require('../../dump')
 
 module.exports = grid
 

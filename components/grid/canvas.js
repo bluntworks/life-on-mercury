@@ -3,7 +3,6 @@ var merc = require('mercury')
 var m2g  = require('./mouse-grid').m2g
 var g2m  = require('./mouse-grid').g2m
 var raf  = require('raf')
-var dump = require('../../dump')
 
 module.exports = Canvas
 
